@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-// Color definitions
 const (
 	RED    = "\033[0;31m"
 	GREEN  = "\033[0;32m"
@@ -53,7 +52,6 @@ func main() {
 	binName := strings.TrimSuffix(filepath.Base(sourceFile), ".go")
 	outDir := "packagesoft_build"
 
-	// Create output directory
 	os.MkdirAll(outDir, 0755)
 
 	showBanner()
@@ -67,8 +65,8 @@ func main() {
 		{"linux", "arm", ""},
 		{"windows", "amd64", ".exe"},
 		{"windows", "386", ".exe"},
-		{"darwin", "amd64", ""}, // macOS Intel
-		{"darwin", "arm64", ""}, // macOS Apple Silicon
+		{"darwin", "amd64", ""},
+		{"darwin", "arm64", ""},
 	}
 
 	for _, t := range targets {
@@ -77,12 +75,11 @@ func main() {
 
 		fmt.Printf("%s[>] Building for %-15s... %s", CYAN, suffix, NC)
 
-		// Set Environment Variables for Cross-Compilation
 		cmd := exec.Command("go", "build", "-ldflags", "-s -w", "-o", outFile, sourceFile)
 		cmd.Env = append(os.Environ(),
 			"GOOS="+t.os,
 			"GOARCH="+t.arch,
-			"CGO_ENABLED=0", // Force static binary
+			"CGO_ENABLED=0",
 		)
 
 		err := cmd.Run()
